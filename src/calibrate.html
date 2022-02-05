@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link
+			rel="stylesheet"
+			href="https://cdn.materialdesignicons.com/4.9.95/css/materialdesignicons.min.css"
+		/>
+    <link rel="stylesheet" href="./styles.css" />
+	<link rel="stylesheet" href="./sidebar.css" />
+    <link rel="stylesheet" href="./sphere.css" />
+    <link rel="stylesheet" href="./caresoul.css">
+    
+    
+    <script src="/node_modules/animejs/lib/anime.min.js"></script>
+    <link href="/dist/output.css" rel="stylesheet">
+</head>
+<body>
+    <aside class="sidebar">
+        <nav>
+            <ul class="sidebar__nav">
+                <li>
+                    <a href="./index.html" class="sidebar__nav__link">
+                        <i class="mdi mdi-home"></i>
+                        <span class="sidebar__nav__text">Sensor View</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="./stagemessage.html" class="sidebar__nav__link">
+                        <i class="mdi mdi-information"></i>
+                        <span class="sidebar__nav__text">Stage + Message View</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="./camera.html" class="sidebar__nav__link">
+                        <i class="mdi mdi-camera"></i>
+                        <span class="sidebar__nav__text">Camera View</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="./P&ID.html" class="sidebar__nav__link">
+                        <i class="mdi mdi-wrench"></i>
+                        <span class="sidebar__nav__text">P&ID</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="./calibrate.html" class="sidebar__nav__link">
+                        <i class="mdi mdi-hammer-wrench"></i>
+                        <span class="sidebar__nav__text">Calibration</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="./actions.html" class="sidebar__nav__link">
+                        <i class="mdi mdi-alert-box"></i>
+                        <span class="sidebar__nav__text">Actions</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+        <div class="h-screen bg-gray-900 ">
+            <div class="h-1/6 w-full">
+                <div class="h-1/2 flex flex-row justify-evenly items-center">
+                    <div class="flex items-center flex-col">
+                        <h1 class="text-gray-300 text-2xl font-bold">
+                            PT-1
+                        </h1>
+                        <p class="text-gray-100 text-xl font-semibold">
+                            20
+                        </p>
+                    </div>
+
+                    <div class="flex items-center flex-col">
+                        <h1 class="text-gray-300 text-2xl font-bold">
+                            PT-2
+                        </h1>
+                        <p class="text-gray-100 text-xl font-semibold">
+                            20
+                        </p>
+                    </div>
+
+                    <div class="flex items-center flex-col">
+                        <h1 class="text-gray-300 text-2xl font-bold">
+                            PT-3
+                        </h1>
+                        <p class="text-gray-100 text-xl font-semibold">
+                            20
+                        </p>
+                    </div>
+
+                    <div class="flex items-center flex-col">
+                        <h1 class="text-gray-300 text-2xl font-bold">
+                            PT-4
+                        </h1>
+                        <p class="text-gray-100 text-xl font-semibold">
+                            20
+                        </p>
+                    </div>
+
+                    <div class="flex items-center flex-col">
+                        <h1 class="text-gray-300 text-2xl font-bold">
+                            PT-5
+                        </h1>
+                        <p class="text-gray-100 text-xl font-semibold">
+                            20
+                        </p>
+                    </div>
+
+                    <div class="flex items-center flex-col">
+                        <h1 class="text-gray-300 text-2xl font-bold">
+                            PT-6
+                        </h1>
+                        <p class="text-gray-100 text-xl font-semibold">
+                            20
+                        </p>
+                    </div>
+
+                
+                </div>
+                
+                  
+                <div class="h-1/2 flex justify-center items-center">
+                    <div class="w-3/4 bg-slate-600 h-3/4 flex justify-center items-center rounded-xl">
+                        <ul class="flex w-3/4  rounded-xl mx-auto">
+                            <li class="flex-1 mr-2">
+                              <a class="text-center font-semibold block border-2 border-slate-800 rounded py-2 px-4 bg-slate-700 hover:border-gray-200 hover:bg-slate-800 text-white" href="#">Pressure</a>
+                            </li>
+                            <li class="flex-1 mr-2">
+                              <a class="text-center font-semibold bg-slate-900 block border-2 border-slate-800 rounded hover:border-gray-200 text-gray-200 hover:bg-slate-800 py-2 px-4" href="#">Thermocouples</a>
+                            </li>
+                            <li class="flex-1 mr-2">
+                                <a class="text-center font-semibold bg-slate-900 block border-2 border-slate-800 rounded hover:border-gray-200 text-gray-200 hover:bg-slate-800 py-2 px-4" href="#">IMU</a>
+                              </li>
+                              <li class="flex-1 mr-2">
+                                <a class="text-center font-semibold bg-slate-900 block border-2 border-slate-800 rounded hover:border-gray-200 text-gray-200 hover:bg-slate-800 py-2 px-4" href="#">Load Cells</a>
+                              </li>
+                            
+                          </ul>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="h-4/6 w-full">
+                <div class="w-full h-full mx-auto  flex flex-row  justify-evenly items-center">
+                    <div class="">
+                        <img src="../imgs/pandid.png" alt="" class="rounded-xl ">
+                    </div>
+                </div>
+            </div>
+
+            <div class= "h-1/6 ">
+                <div class="w-1/4 h-full flex justify-evenly items-center mx-auto container">
+                    <div>
+                        <h1 class="text-gray-300 text-2xl font-bold pb-2">
+                            Min Range
+                        </h1>
+                        <input type="range" max="100" value="45" class="range range-accent" id = "slider" oninput = "sliderChange()">
+                        <h1 class="text-gray-300 text-2xl font-bold text-center" id = "value1">
+                            45
+                        </h1>
+                    </div>
+                    
+                    <div>
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                            Calibrate
+                          </button>
+                    </div>
+                    <div>
+                        <h1 class="text-gray-300 text-2xl font-bold pb-2">
+                            Max Range
+                        </h1>
+                        
+                        <input type="range" max="100" value="55" class="range range-accent" id="slider2" oninput = "sliderChange()">
+                        <h1 class="text-gray-300 text-2xl font-bold text-center" id="value2">
+                            55
+                        </h1>
+                    </div>
+                </div>
+            </div>
+
+          
+
+        </div>
+    </main>
+    <script src="./sphere.js"></script>
+</body>
+<script>
+    slider1 = document.getElementById("slider")
+    value1 = document.getElementById("value1")
+    //make new variables for slider 1 and value 1
+    slider2 = document.getElementById("slider2")
+    value2 = document.getElementById("value2")
+    
+    function sliderChange(){
+        value1.textContent = slider1.value
+        console.log(slider.value)
+        //update value 1 text content with slider 1 value
+        value2.textContent = slider2.value
+        console.log(slider2.value)
+    }
+    
+
+</script>
+</html>
