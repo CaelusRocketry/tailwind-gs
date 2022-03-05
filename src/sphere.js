@@ -74,11 +74,29 @@ function fitElementToParent(el, padding) {
         easing: 'easeOutQuint',
         autoplay: false
       }, 0);
+
+    
+    var rotateAnim = anime({
+      targets: '.sphere-animation',
+
+      rotateX: {
+        value: 360,
+        duration: 2500,
+        easing: 'linear'
+      },
+      loop: true
+    });
   
     function init() {
+      // var grad = document.querySelector('.sphere-animation');
+      // grad.style.rotate = 'rotateX(270deg)'
       introAnimation.play();
       breathAnimation.play();
       shadowAnimation.play();
+      rotateAnim.play();
+      // var grad = document.getElementById('sphereGradient')
+  
+      
     }
     
     init();

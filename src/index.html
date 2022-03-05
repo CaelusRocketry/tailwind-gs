@@ -14,6 +14,18 @@
     
     <script src="/node_modules/animejs/lib/anime.min.js"></script>
     <link href="/dist/output.css" rel="stylesheet">
+
+    <script src='zepto.js'></script>
+	<!-- Three.js and Detector.js -->
+	<script src='three.min.js'></script>
+
+	<!-- Supplied by Telemachus -->
+	<!-- <script type="text/javascript" src="jKSPWAPICore.js"></script> -->
+
+	<!-- Own styles -->
+
+	<link rel="stylesheet" type="text/css" href="ystyle.css" />
+    
 </head>
 
 <body>
@@ -128,11 +140,11 @@
             <div class="h-3/6 w-full">
                 <div class="w-width h-full mx-auto  flex flex-row  justify-evenly items-center">
                     <div class="w-5/12">
-                        <div id="chartContainer"  style="height: 300px; width:100%;" ></div>
+                        <div id="chartContainer" ></div>
                 
                     </div>
                     <div class="w-5/12">
-                        <div id="chartContainer2"  style="height: 300px; width:100%;"></div>
+                        <div id="chartContainer2"  ></div>
                     </div>
                     
                     
@@ -147,8 +159,8 @@
                     </div>
                 </div>
                <div class="w-1/6 flex justify-center">
-                    <div class="animation-wrapper">
-                        <div class="sphere-animation">
+                    <!-- <div class="animation-wrapper">
+                        <!-- <div class="sphere-animation">
                         <svg class="sphere" viewBox="0 0 440 440" stroke="rgba(80,80,80,.35)">
                             <defs>
                             <linearGradient id="sphereGradient" x1="5%" x2="5%" y1="0%" y2="15%">
@@ -179,8 +191,20 @@
                             <path d="M125.608 125.241c-35.88 35.88-75.255 54.677-87.947 41.985-12.692-12.692 6.105-52.067 41.985-87.947C115.525 43.4 154.9 24.603 167.592 37.295c12.692 12.692-6.105 52.067-41.984 87.946z"/>
                             <path d="M109.698 109.332c-24.408 24.407-51.12 37.268-59.663 28.726-8.542-8.543 4.319-35.255 28.727-59.662 24.407-24.408 51.12-37.27 59.662-28.727 8.543 8.543-4.319 35.255-28.726 59.663z"/>
                         </svg>
-                        </div>
+                        </div> -->
+                    <!-- </div> --> 
+
+                    <div class="centred">
+                        <!-- WebGL drawing canvas -->
+                        <div id="ThreeJS"></div>
+                        <!-- <img id="indicator" src="indicator.png" /> -->
+                        <pre class="readout centred" id="kerbalrotation"></pre>
                     </div>
+                
+                
+                    <script>
+                       
+                    </script>
                </div>
 
                <div class="w-1/3">
@@ -197,53 +221,121 @@
     </main>
     <script src="./sphere.js"></script>
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src='https://cdn.plot.ly/plotly-2.9.0.min.js'></script>
 </body>
+
 <script>
+
     window.onload = function () {
+
+    // Generic ThreeJS stuff
+    var container, scene, camera, renderer, ball;
+    // rotation vectors
+    var X = new THREE.Vector3 (1,0,0);
+    var Y = new THREE.Vector3 (0,1,0);
+    var Z = new THREE.Vector3 (0,0,1);
+    // For debugging: Stop updates (because they spam console.log if shit breaks)
+    var stop = false;
+
+
+    function dr (deg) {
+        return deg*(Math.PI/180);
+    }
+
+    function kerbRotate3 (Pitch,Heading,Roll) {
+        $("#kerbalrotation")[0].innerHTML="Pit:\t"+(Pitch|0)+"\nHdg:\t"+(Heading|0)+"\nRol:\t"+(Roll|0);
+
+        /* After spending way too much time staring at quaternions and Euler
+        vectors and rotation matrices and fuck all that, we're doing this
+        the easy way. The navball will jump around if a draw is scheduled
+        in the middle of these operations, but screw that. */
+
+        var r = ball.rotation;
+        // Reset rotation to make sure we're rotating around world coordinates
+        r.x=0;
+        r.y=0;
+        r.z=0;
+        // The texture seems to be rotated wrong, so we'll have to transform
+        // the rotation values given.
+        ball.rotateOnAxis (Z, dr(-Roll));
+        ball.rotateOnAxis (X, dr(-Pitch));
+        ball.rotateOnAxis (Y, dr(270-Heading));
+    }
+
+    // Updater
+    setInterval (function () {
+        if (stop)
+            return;
+        var qry = "pitch=n.rawpitch&heading=n.rawheading&roll=n.rawroll";
+        jKSPWAPI.call (qry, function (v) {
+            // TODO: As noted above, this should just be cached and the navball
+            // rotated in some function that's guaranteed to not be called in the
+            // middle of a drawing call. Also could be animated.
+            kerbRotate3 (v.pitch, v.heading, v.roll);
+        });
+    }, 330);
+
+
+    // Generic ThreeJS setup stuff, taken directly from the example code
+
+    init();
+    animate();
+
+    function init()
+    {
+        // scene setup
+        scene = new THREE.Scene();
+        var SCREEN_WIDTH = 300, SCREEN_HEIGHT = 300;
+        var VIEW_ANGLE = 45, ASPECT = 1, NEAR = 1, FAR = 2000;
+        camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+        scene.add(camera);
+        camera.position.set(0,0,120);
+        camera.lookAt(scene.position);
+
+        if ( Detector.webgl )
+            renderer = new THREE.WebGLRenderer( {antialias:true} );
+        else
+            renderer = new THREE.CanvasRenderer();
+        renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        container = document.getElementById( 'ThreeJS' );
+        container.appendChild( renderer.domElement );
+        var light = new THREE.PointLight(0xffffff);
+        light.position.set(0,150,100);
+        scene.add(light);
+
+        // radius, segmentsWidth, segmentsHeight
+        var sphereGeom =  new THREE.SphereGeometry( 40, 48, 32 );
+
+        var moonTexture = THREE.ImageUtils.loadTexture( 'navball.png' );
+        moonTexture.anisotropy = 16;
+        var moonMaterial = new THREE.MeshBasicMaterial( { map: moonTexture } );
+        ball = new THREE.Mesh( sphereGeom.clone(), moonMaterial );
+        ball.position.set(0, 0, 0);
+        scene.add( ball );
+
+        kerbRotate3(30,45,90)
+    }
+
+    function animate()
+    {
+        requestAnimationFrame( animate );
+        render();
+    }
+
+    function render()
+    {
+        renderer.render( scene, camera );
+    }
     
-    var dps1 = []; // dataPoints
-    var dps2 = []
-    var dps3 = []
-    var dps4 = []
-    var chart1 = new CanvasJS.Chart("chartContainer", {
-        title :{
-            text: "PT-1"
-        },
-        data: [{
-            type: "line",
-            dataPoints: dps1
-        }]
-    });
+    var x1 = [0]; // dataPoints
 
-    var chart2 = new CanvasJS.Chart("chartContainer2", {
-        title :{
-            text: "PT-2"
-        },
-        data: [{
-            type: "line",
-            dataPoints: dps2
-        }]
-    });
 
-    var chart3 = new CanvasJS.Chart("chartContainer3", {
-        title :{
-            text: "PT-3"
-        },
-        data: [{
-            type: "line",
-            dataPoints: dps3
-        }]
-    });
-
-    var chart4 = new CanvasJS.Chart("chartContainer4", {
-        title :{
-            text: "PT-4"
-        },
-        data: [{
-            type: "line",
-            dataPoints: dps4
-        }]
-    });
+    var y1 = [100]; // dataPoints
+    var y2 = [150]
+    var y3 = [250]
+    var y4 = [200]
+    
+  
 
     var pt1 = document.getElementById("pt-1")
     var pt2 = document.getElementById("pt-2")
@@ -254,10 +346,53 @@
     
     var yVal1 = 100; 
     var yVal2 = 150
-    var yVal3 = 50; 
+    var yVal3 = 250; 
     var yVal4 = 200
+
+
+    var trace1 = {
+        x: x1,
+        y: y1,
+        type: 'scatter'
+    }
+
+    var trace2 = {
+        x: x1,
+        y: y2,
+        type: 'scatter'
+    }
+
+    var trace3 = {
+        x: x1,
+        y: y3,
+        type: 'scatter'
+    }
+
+    var trace4 = {
+        x: x1,
+        y: y4,
+        type: 'scatter'
+    }
+      
     
-    var updateInterval = 150;
+      
+    var data1 = [trace1];
+    var data2 = [trace2];
+    var data3 = [trace3];
+    var data4 = [trace4];
+    
+    Plotly.newPlot('chartContainer', data1);
+
+    Plotly.newPlot('chartContainer2', data2);
+
+    Plotly.newPlot('chartContainer3', data3);
+
+    Plotly.newPlot('chartContainer4', data4);
+
+    
+   
+    
+    var updateInterval = 250;
     var dataLength = 50; // number of dataPoints visible at any point
     
     var updateChart = function (count) {
@@ -269,56 +404,69 @@
             yVal2 = yVal2 +  Math.round(5 + Math.random() *(-5-5));
             yVal3 = yVal3 +  Math.round(5 + Math.random() *(-5-5));
             yVal4 = yVal4 +  Math.round(5 + Math.random() *(-5-5));
-            dps1.push({
-                x: xVal,
-                y: yVal1
-            });
             
-            dps2.push({
-                x: xVal,
-                y: yVal2
-            });
+            x1.push(xVal)
             
-            dps3.push({
-                x: xVal,
-                y: yVal3
-            });
+            y1.push(yVal1)
 
-            dps4.push({
-                x: xVal,
-                y: yVal4
-            });
+     
+            y2.push(yVal2)
 
+
+            y3.push(yVal3)
+
+            console.log(y3)
+    
+            y4.push(yVal4)
+            
             xVal++;
         }
     
-        if (dps1.length > dataLength) {
-            dps1.shift();
-            dps2.shift()
-            dps3.shift()
-            dps4.shift()
-        }
+        if (x1.length > dataLength) {
+        
+            x1.shift()
+            y1.shift()
+
     
-        chart1.render();
-        chart2.render();
-        chart3.render();
-        chart4.render();
+            y2.shift()
+
+            y3.shift()
+
+            y4.shift()
+
+      
+
+        }
+        
+     
+      
+        Plotly.redraw('chartContainer')
+
+        Plotly.redraw('chartContainer2')
+
+        Plotly.redraw('chartContainer3')
+
+        Plotly.redraw('chartContainer4')
+     
 
         pt1.textContent = yVal1
         pt2.textContent = yVal2
         pt3.textContent = yVal3
         pt4.textContent = yVal4
+
+           
+        //ROTATE
+        kerbRotate3(xVal,360-xVal,-270 + xVal)
         
     };
     
-    updateChart(dataLength, chart1);
-    updateChart(dataLength, chart2);
-    updateChart(dataLength, chart3);
-    updateChart(dataLength, chart4);
+    updateChart(dataLength);
+    
     setInterval(function(){
         updateChart()
     }, updateInterval);
     
     }
+    
     </script>
 </html>
