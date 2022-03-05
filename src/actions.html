@@ -95,8 +95,8 @@
                         <h1 class="text-gray-300 text-2xl font-bold">
                             PT-4
                         </h1>
-                        <p class="text-gray-100 text-xl font-semibold" >
-                            20
+                        <p class="text-gray-100 text-xl font-semibold" id = 'pt-4' >
+                            0
                         </p>
                     </div>
 
@@ -337,53 +337,72 @@
               
         </div>
     </main>
-    <script src="./sphere.js"></script>
+    <!-- <script src="./sphere.js"></script> -->
+    <script src='https://cdn.plot.ly/plotly-2.9.0.min.js'></script>
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </body>
 <script>
-    window.onload = function () {
-    var dps = []; // dataPoints
-    var dps2 = []
-    var dps3 = []
-    var chart = new CanvasJS.Chart("chartContainer", {
-        title :{
-            text: "PT-1"
-        },
-        data: [{
-            type: "line",
-            dataPoints: dps
-        }]
-    });
+    var x1 = [0]; // dataPoints
 
-    var chart2 = new CanvasJS.Chart("chartContainer2", {
-        title :{
-            text: "PT-2"
-        },
-        data: [{
-            type: "line",
-            dataPoints: dps2
-        }]
-    });
 
-    var chart3 = new CanvasJS.Chart("chartContainer3", {
-        title :{
-            text: "PT-3"
-        },
-        data: [{
-            type: "line",
-            dataPoints: dps3
-        }]
-    });
+    var y1 = [100]; // dataPoints
+    var y2 = [150]
+    var y3 = [50]
+
     
-    pt1 = document.getElementById("pt-1")
-    pt2 = document.getElementById("pt-2")
-    pt3 = document.getElementById("pt-3")
+  
 
+    var pt1 = document.getElementById("pt-1")
+    var pt2 = document.getElementById("pt-2")
+    var pt3 = document.getElementById("pt-3")
+    var pt4 = document.getElementById("pt-4")
+    
     var xVal = 0;
-    var yVal = 100; 
+    
+    var yVal1 = 100; 
     var yVal2 = 150
-    var yVal3 = 50
-    var updateInterval = 150;
+    var yVal3 = 250; 
+    var yVal4 = 200
+
+
+    var trace1 = {
+        x: x1,
+        y: y1,
+        type: 'scatter'
+    }
+
+    var trace2 = {
+        x: x1,
+        y: y2,
+        type: 'scatter'
+    }
+
+    var trace3 = {
+        x: x1,
+        y: y3,
+        type: 'scatter'
+    }
+
+ 
+      
+    
+      
+    var data1 = [trace1];
+    var data2 = [trace2];
+    var data3 = [trace3];
+
+    
+    Plotly.newPlot('chartContainer', data1);
+
+    Plotly.newPlot('chartContainer2', data2);
+
+    Plotly.newPlot('chartContainer3', data3);
+
+
+    
+   
+    
+    var updateInterval = 250;
     var dataLength = 50; // number of dataPoints visible at any point
     
     var updateChart = function (count) {
@@ -391,47 +410,65 @@
         count = count || 1;
     
         for (var j = 0; j < count; j++) {
-            yVal = yVal +  Math.round(5 + Math.random() *(-5-5));
-            dps.push({
-                x: xVal,
-                y: yVal
-            });
+            yVal1 = yVal1 +  Math.round(5 + Math.random() *(-5-5));
             yVal2 = yVal2 +  Math.round(5 + Math.random() *(-5-5));
-            dps2.push({
-                x: xVal,
-                y: yVal2
-            });
             yVal3 = yVal3 +  Math.round(5 + Math.random() *(-5-5));
-            dps3.push({
-                x: xVal,
-                y: yVal3
-            });
+            yVal4 = yVal4 +  Math.round(5 + Math.random() *(-5-5));
+            
+            x1.push(xVal)
+            
+            y1.push(yVal1)
+
+     
+            y2.push(yVal2)
+
+
+            y3.push(yVal3)
+
+            
             xVal++;
         }
     
-        if (dps.length > dataLength) {
-            dps.shift();
-            dps2.shift()
-            dps3.shift()
-        }
-    
-        chart.render();
-        chart2.render();
-        chart3.render();
+        if (x1.length > dataLength) {
+        
+            x1.shift()
+            y1.shift()
 
-        pt1.textContent = yVal
+    
+            y2.shift()
+
+            y3.shift()
+
+    
+
+      
+
+        }
+        
+     
+      
+        Plotly.redraw('chartContainer')
+
+        Plotly.redraw('chartContainer2')
+
+        Plotly.redraw('chartContainer3')
+
+     
+
+        pt1.textContent = yVal1
         pt2.textContent = yVal2
         pt3.textContent = yVal3
+        pt4.textContent = yVal4
 
-
+        
     };
     
-    updateChart(dataLength, chart);
-    updateChart(dataLength, chart2);
+    updateChart(dataLength);
+    
     setInterval(function(){
         updateChart()
     }, updateInterval);
     
-    }
+    
     </script>
 </html>
